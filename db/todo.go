@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"fmt"
@@ -6,8 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	p "github.com/Swatto/td/printer"
 	"github.com/daviddengcn/go-colortext"
+)
+
+const (
+	OkSign = "✔"
+	KoSign = "✘"
 )
 
 type Todo struct {
@@ -23,10 +27,10 @@ func (t *Todo) MakeOutput(useColor bool) {
 
 	if t.Status == "done" {
 		color = ct.Green
-		symbole = p.OkSign
+		symbole = OkSign
 	} else {
 		color = ct.Red
-		symbole = p.KoSign
+		symbole = KoSign
 	}
 
 	hashtag_reg := regexp.MustCompile("#[^\\s]*")

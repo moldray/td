@@ -7,13 +7,14 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/daviddengcn/go-colortext"
+	"github.com/moldray/td/db"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "td"
 	app.Usage = "Your todos manager"
-	app.Version = "1.4.0"
+	app.Version = "1.5.0"
 	app.Author = "Gaël Gillard"
 	app.Email = "gael@gaelgillard.com"
 	app.Flags = []cli.Flag{
@@ -28,7 +29,7 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		var err error
-		collection := Collection{}
+		collection := db.Collection{}
 
 		err = collection.RetrieveTodos()
 		if err != nil {
@@ -68,7 +69,7 @@ func main() {
 					return
 				}
 
-				err = CreateStoreFileIfNeeded(cwd + "/.todos")
+				err = db.CreateStoreFileIfNeeded(cwd + "/.todos")
 				ct.ChangeColor(ct.Cyan, false, ct.None, false)
 				if err != nil {
 					fmt.Printf("A \".todos\" file already exist in \"%s\".\n", cwd)
@@ -96,8 +97,8 @@ func main() {
 					return
 				}
 
-				collection := Collection{}
-				todo := Todo{
+				collection := db.Collection{}
+				todo := db.Todo{
 					Id:       0,
 					Desc:     c.Args()[0],
 					Status:   "pending",
@@ -135,7 +136,7 @@ func main() {
 					return
 				}
 
-				collection := Collection{}
+				collection := db.Collection{}
 				collection.RetrieveTodos()
 
 				id, err := strconv.ParseInt(c.Args()[0], 10, 32)
@@ -173,7 +174,7 @@ func main() {
 					return
 				}
 
-				collection := Collection{}
+				collection := db.Collection{}
 				collection.RetrieveTodos()
 
 				id, err := strconv.ParseInt(c.Args()[0], 10, 32)
@@ -198,7 +199,7 @@ func main() {
 			ShortName: "c",
 			Usage:     "Remove finished todos from the list",
 			Action: func(c *cli.Context) {
-				collection := Collection{}
+				collection := db.Collection{}
 				collection.RetrieveTodos()
 
 				err := collection.RemoveFinishedTodos()
@@ -218,7 +219,7 @@ func main() {
 			ShortName: "r",
 			Usage:     "Reset ids of todo (no arguments) or swap the position of two todos",
 			Action: func(c *cli.Context) {
-				collection := Collection{}
+				collection := db.Collection{}
 				collection.RetrieveTodos()
 
 				if len(c.Args()) == 1 {
@@ -290,7 +291,7 @@ func main() {
 					return
 				}
 
-				collection := Collection{}
+				collection := db.Collection{}
 				collection.RetrieveTodos()
 				collection.Search(c.Args()[0])
 
@@ -318,7 +319,7 @@ func main() {
 
 	app.Before = func(c *cli.Context) error {
 		var err error
-		path := GetDBPath()
+		path := db.GetDBPath()
 
 		if path == "" {
 			fmt.Println()
@@ -333,7 +334,7 @@ func main() {
 			fmt.Println()
 		}
 
-		CreateStoreFileIfNeeded(path)
+		db.CreateStoreFileIfNeeded(path)
 
 		return err
 	}
