@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+// Collection 构造结构体
 type Collection struct {
 	Todos []*Todo
 }
 
+// CreateStoreFileIfNeeded 创建存储文件
 func CreateStoreFileIfNeeded(path string) error {
 	fi, err := os.Stat(path)
 	if (err != nil && os.IsNotExist(err)) || fi.Size() == 0 {
@@ -33,12 +35,14 @@ func CreateStoreFileIfNeeded(path string) error {
 	return nil
 }
 
+// RemoveAtIndex 删除某一项
 func (c *Collection) RemoveAtIndex(item int) {
 	s := *c
 	s.Todos = append(s.Todos[:item], s.Todos[item+1:]...)
 	*c = s
 }
 
+// RetrieveTodos 重置todos
 func (c *Collection) RetrieveTodos() error {
 	file, err := os.OpenFile(GetDBPath(), os.O_RDONLY, 0600)
 	if err != nil {
@@ -51,6 +55,7 @@ func (c *Collection) RetrieveTodos() error {
 	return err
 }
 
+// WriteTodos 写文件
 func (c *Collection) WriteTodos() error {
 	file, err := os.OpenFile(GetDBPath(), os.O_RDWR|os.O_TRUNC, 0600)
 	if err != nil {
@@ -68,6 +73,7 @@ func (c *Collection) WriteTodos() error {
 	return err
 }
 
+// ListPendingTodos 列出未完成的todos
 func (c *Collection) ListPendingTodos() {
 	for i := len(c.Todos) - 1; i >= 0; i-- {
 		if c.Todos[i].Status != "pending" {
@@ -76,6 +82,7 @@ func (c *Collection) ListPendingTodos() {
 	}
 }
 
+// ListDoneTodos 列出已完成todos
 func (c *Collection) ListDoneTodos() {
 	for i := len(c.Todos) - 1; i >= 0; i-- {
 		if c.Todos[i].Status != "done" {
@@ -84,6 +91,7 @@ func (c *Collection) ListDoneTodos() {
 	}
 }
 
+// CreateTodo 创建todo
 func (c *Collection) CreateTodo(newTodo *Todo) (int64, error) {
 	var highestId int64 = 0
 	for _, todo := range c.Todos {
@@ -100,6 +108,7 @@ func (c *Collection) CreateTodo(newTodo *Todo) (int64, error) {
 	return newTodo.Id, err
 }
 
+// Find 查找
 func (c *Collection) Find(id int64) (foundedTodo *Todo, err error) {
 	founded := false
 	for _, todo := range c.Todos {
@@ -114,6 +123,7 @@ func (c *Collection) Find(id int64) (foundedTodo *Todo, err error) {
 	return
 }
 
+// Toggle 改变状态
 func (c *Collection) Toggle(id int64) (*Todo, error) {
 	todo, err := c.Find(id)
 
@@ -137,6 +147,7 @@ func (c *Collection) Toggle(id int64) (*Todo, error) {
 	return todo, err
 }
 
+// Modify 修改todo内容
 func (c *Collection) Modify(id int64, desc string) (*Todo, error) {
 	todo, err := c.Find(id)
 
@@ -156,12 +167,29 @@ func (c *Collection) Modify(id int64, desc string) (*Todo, error) {
 	return todo, err
 }
 
+// RemoveFinishedTodos 删除已完成todos
 func (c *Collection) RemoveFinishedTodos() error {
 	c.ListPendingTodos()
 	err := c.WriteTodos()
 	return err
 }
 
+// DeleteTodo 删除todo
+func (c *Collection) DeleteTodo(id int64) error {
+	var err error
+	index := int(id) - 1
+
+	if index < 0 {
+		err = errors.New("id can not be less than 1")
+	} else {
+		c.RemoveAtIndex(index)
+		err = c.WriteTodos()
+	}
+
+	return err
+}
+
+// Reorder 重新排序
 func (c *Collection) Reorder() error {
 	for i, todo := range c.Todos {
 		todo.Id = int64(i + 1)
@@ -170,6 +198,7 @@ func (c *Collection) Reorder() error {
 	return err
 }
 
+// Swap 交换位置
 func (c *Collection) Swap(idA int64, idB int64) error {
 	var positionA int
 	var positionB int
@@ -190,6 +219,7 @@ func (c *Collection) Swap(idA int64, idB int64) error {
 	return err
 }
 
+// Search 搜索
 func (c *Collection) Search(sentence string) {
 	sentence = regexp.QuoteMeta(sentence)
 	re := regexp.MustCompile("(?i)" + sentence)

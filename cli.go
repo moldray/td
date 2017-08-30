@@ -35,7 +35,6 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-
 			if !c.IsSet("all") {
 				if c.IsSet("done") {
 					collection.ListDoneTodos()
@@ -85,7 +84,6 @@ func main() {
 			ShortName: "a",
 			Usage:     "Add a new todo",
 			Action: func(c *cli.Context) {
-
 				if len(c.Args()) != 1 {
 					fmt.Println()
 					ct.ChangeColor(ct.Red, false, ct.None, false)
@@ -120,11 +118,43 @@ func main() {
 			},
 		},
 		{
+			Name:      "delete",
+			ShortName: "d",
+			Usage:     "Delete todo from the list",
+			Action: func(c *cli.Context) {
+				collection := db.Collection{}
+				collection.RetrieveTodos()
+
+				if len(c.Args()) != 1 {
+					fmt.Println()
+					ct.ChangeColor(ct.Red, false, ct.None, false)
+					fmt.Println("Error")
+					ct.ResetColor()
+					fmt.Println("You must provide the position of the item you want to delete.")
+					fmt.Println("Example: td delete 1")
+					fmt.Println()
+					return
+				}
+
+				id, err := strconv.ParseInt(c.Args()[0], 10, 32)
+
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				collection.DeleteTodo(id)
+
+				ct.ChangeColor(ct.Cyan, false, ct.None, false)
+				fmt.Printf("Your todo is deleted.\n")
+				ct.ResetColor()
+			},
+		},
+		{
 			Name:      "modify",
 			ShortName: "m",
 			Usage:     "Modify the text of an existing todo",
 			Action: func(c *cli.Context) {
-
 				if len(c.Args()) != 2 {
 					fmt.Println()
 					ct.ChangeColor(ct.Red, false, ct.None, false)
