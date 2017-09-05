@@ -13,7 +13,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "td"
-	app.Usage = "Your todos manager"
+	app.Usage = "Todo Manager"
 	app.Version = "1.6.0"
 	app.Author = "Mold Ray"
 	app.Email = "leids@foxmail.com"
