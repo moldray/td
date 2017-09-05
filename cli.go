@@ -233,15 +233,14 @@ func main() {
 				collection.RetrieveTodos()
 
 				err := collection.RemoveFinishedTodos()
-
 				if err != nil {
 					fmt.Println(err)
 					return
-				} else {
-					ct.ChangeColor(ct.Cyan, false, ct.None, false)
-					fmt.Println("Your list is now flushed of finished todos.")
-					ct.ResetColor()
 				}
+
+				ct.ChangeColor(ct.Cyan, false, ct.None, false)
+				fmt.Println("Your list is now flushed of finished todos.")
+				ct.ResetColor()
 			},
 		},
 		{
