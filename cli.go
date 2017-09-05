@@ -5,18 +5,18 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/codegangsta/cli"
 	"github.com/daviddengcn/go-colortext"
 	"github.com/moldray/td/db"
+	"github.com/urfave/cli"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "td"
 	app.Usage = "Your todos manager"
-	app.Version = "1.5.0"
-	app.Author = "Gaël Gillard"
-	app.Email = "gael@gaelgillard.com"
+	app.Version = "1.6.0"
+	app.Author = "Mold Ray"
+	app.Email = "leids@foxmail.com"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "done, d",
